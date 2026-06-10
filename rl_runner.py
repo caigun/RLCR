@@ -65,7 +65,12 @@ def main(script_args, training_args, model_args):
     if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
         logger.info(f"Checkpoint detected, resuming training at {last_checkpoint=}.")
 
-    dataset = load_dataset(script_args.dataset_name, name=script_args.dataset_config)
+    import os as _os
+    from datasets import load_from_disk as _load_from_disk
+    if _os.path.isdir(script_args.dataset_name) and _os.path.exists(_os.path.join(script_args.dataset_name, "dataset_dict.json")):
+        dataset = _load_from_disk(script_args.dataset_name)
+    else:
+        dataset = load_dataset(script_args.dataset_name, name=script_args.dataset_config)
 
      # Get reward functions
     REWARD_FUNCS_REGISTRY = {

@@ -1,0 +1,43 @@
+# ModelConfig
+model_name_or_path: Qwen/Qwen2.5-0.5B-Instruct
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+trust_remote_code: true
+
+# GRPOScriptArguments
+dataset_name: /workspace/data/rlcr_popqa
+dataset_train_split: train
+dataset_test_split: test
+task_spec: gen
+sys_prompt_name: tabc_long
+format_pattern: tabc
+reward_funcs: ["format", "accuracy", "brier", "mean_confidence", "confidence_one_or_zero"]
+train_subset_size: 8
+eval_subset_size: 4
+
+# GRPOConfig
+output_dir: /workspace/data/out/rlcr_popqa_smoke
+run_name: RLCR-popqa-smoke
+bf16: true
+beta: 0.0
+reward_weights: [0.5, 0.5, 0.5, 0.000001, 0.000001]
+num_generations: 4
+per_device_train_batch_size: 8
+gradient_accumulation_steps: 1
+max_prompt_length: 1024
+max_completion_length: 256
+max_steps: 2
+num_train_epochs: 1
+learning_rate: 1.0e-06
+lr_scheduler_type: constant_with_warmup
+warmup_ratio: 0.0
+logging_steps: 1
+save_strategy: "no"
+eval_strategy: "no"
+report_to: []
+temperature: 0.7
+use_vllm: false
+scale_rewards: false
+seed: 43
+gradient_checkpointing: true
+log_completions: true

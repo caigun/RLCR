@@ -24,6 +24,22 @@ def normalize_answer(s):
 def exact_match_score(prediction, ground_truth):
     return (normalize_answer(prediction) == normalize_answer(ground_truth))
 
+def popqa_match(prediction, answers):
+    """CTA-consistent PopQA correctness: 1.0 if any acceptable alias appears in the
+    model answer (case-insensitive substring), else 0.0. answers is a list of aliases."""
+    if prediction is None:
+        return 0.0
+    if isinstance(answers, str):
+        answers = [answers]
+    pred = prediction.strip()
+    pred_l = pred.lower()
+    for a in answers:
+        a = str(a)
+        if a in pred or a.lower() in pred_l or a.capitalize() in pred:
+            return 1.0
+    return 0.0
+
+
 
 def format_reward(format_pattern,completions, **kwargs):
     """Reward function that checks if the completion has a specific format."""
@@ -79,6 +95,8 @@ def accuracy_reward(format_pattern,completions,answer,source=None,**kwargs):
             #if source exists in key and is equal to hotpot, then use the exact match score
             if source is not None and source[0] == 'hotpot':
                 label = exact_match_score(last_answer,e)
+            elif source is not None and source[0] == 'popqa':
+                label = popqa_match(last_answer, e)
             else:
                 attempt = parse(last_answer)
                 label = verify(e,attempt)
