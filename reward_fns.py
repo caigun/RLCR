@@ -1,6 +1,9 @@
 import math
 import re
-from math_verify import verify,parse
+try:
+    from math_verify import verify, parse
+except Exception:
+    verify = parse = None
 import numpy as np 
 import string
 
