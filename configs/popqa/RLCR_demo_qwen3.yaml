@@ -1,0 +1,44 @@
+# ModelConfig
+model_name_or_path: Qwen/Qwen3-4B
+torch_dtype: bfloat16
+attn_implementation: sdpa
+trust_remote_code: true
+
+# GRPOScriptArguments
+dataset_name: /workspace/data/rlcr_popqa
+dataset_train_split: train
+dataset_test_split: test
+task_spec: gen
+sys_prompt_name: tabc_long
+format_pattern: tabc
+reward_funcs: ["format", "accuracy", "brier", "mean_confidence", "confidence_one_or_zero"]
+train_subset_size: 256
+eval_subset_size: 16
+
+# GRPOConfig
+output_dir: /root/out/rlcr_demo_qwen3
+run_name: RLCR-popqa-demo-qwen3
+bf16: true
+beta: 0.0
+reward_weights: [0.5, 0.5, 0.5, 0.000001, 0.000001]
+num_generations: 4
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 1
+max_prompt_length: 1024
+max_completion_length: 1024
+max_steps: 30
+num_train_epochs: 1
+learning_rate: 2.0e-6
+lr_scheduler_type: constant_with_warmup
+warmup_ratio: 0.03
+logging_steps: 1
+save_strategy: "no"
+eval_strategy: "no"
+report_to: []
+temperature: 0.9
+use_vllm: true
+vllm_gpu_memory_utilization: 0.35
+scale_rewards: false
+seed: 43
+gradient_checkpointing: true
+log_completions: true
